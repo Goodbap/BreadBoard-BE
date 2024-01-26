@@ -10,7 +10,7 @@ public class WebClientConfig {
     public WebClient webClient(){
     return WebClient.builder()
             .baseUrl("https://dapi.kakao.com/v2/local/search/category.json?")
-      .defaultHeader("Authorization", "KakaoAK fc5df5456eb10cc9110d1f98fe36c815")
+      .defaultHeader("Authorization", "KakaoAK api-key")
       .build();
   }
 }
