@@ -1,38 +1,56 @@
 package com.goodbap.breadboard.restaurant.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.goodbap.breadboard.franchise.service.FranchiseService;
 import com.goodbap.breadboard.restaurant.domain.Restaurant;
 import com.goodbap.breadboard.restaurant.dto.RequestDto;
+import com.goodbap.breadboard.restaurant.resource.Meta;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.springframework.stereotype.Service;
-import org.springframework.web.ErrorResponseException;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.ErrorResponseException;
+import org.springframework.stereotype.Service;
 
 @Service
 public class RestaurantService {
-    private final WebClient webClient = WebClient.builder()
-            .baseUrl("https://dapi.kakao.com/v2/local/search/category.json")
-            .defaultHeader("Authorization", "KakaoAK api-key")
-            .build();
+        private final FranchiseService service;
+        private WebClient webClient;
 
-    public List<Restaurant> getRestaurants(RequestDto dto) throws ErrorResponseException {
-        Map<String, Object> response = webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .queryParam("category_group_code", "FD6")
-                        .queryParam("y", dto.getLatitude())
-                        .queryParam("x", dto.getLongitude())
-                        .queryParam("radius", dto.getRadius())
-                        .build())
-                .retrieve()
-                .bodyToMono(Map.class)
-                .block();
-        List<Restaurant> restaurantList = (List<Restaurant>)response.get("documents");
-        return restaurantList;
-        /*
-         * 응답결과
-         * {documents : list<object<식당정보>>, meta : object}
-         */
-    }
+        public RestaurantService(FranchiseService service, WebClient webClient) {
+                this.service = service;
+                this.webClient = webClient;
+        }
+
+        public List<Restaurant> getRestaurants(RequestDto dto) throws ErrorResponseException {
+                List<Restaurant> restaurantList = new ArrayList<Restaurant>();
+                for (int page = 1; page <= 45; page++) {
+                        String pageStr = Integer.toString(page);
+                        Map<String, Object> response = webClient.get()
+                                        .uri(uriBuilder -> uriBuilder
+                                                        .queryParam("category_group_code", "FD6")
+                                                        .queryParam("page", pageStr)
+                                                        .queryParam("y", dto.getLatitude())
+                                                        .queryParam("x", dto.getLongitude())
+                                                        .queryParam("radius", dto.getRadius())
+                                                        .build())
+                                        .retrieve()
+                                        .bodyToMono(Map.class)
+                                        .block();
+                        restaurantList.addAll((List<Restaurant>) response.get("documents"));
+                        ObjectMapper mapper = new ObjectMapper();
+                        Meta resultMeta = mapper.convertValue(response.get("meta"), Meta.class);
+                        if (resultMeta.getIs_end().equals("true")) {
+                                break;
+                        }
+                }
+                System.out.println("주변 음식점 최초응답" + restaurantList.size());
+                return restaurantList;
+        }
+
+        public List<Restaurant> getFilteredRestaurants(RequestDto dto) {
+                return service.franchiseFilter(getRestaurants(dto));
+        }
 }
