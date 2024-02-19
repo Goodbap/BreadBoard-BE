@@ -28,7 +28,7 @@ public class FranchiseService {
             List<String> searchElement = new ArrayList<String>(Arrays.asList(restaurant.getPlace_name().split(" ")));
             for (String element : searchElement) {
                 if (repository.findByBrandName(element).isPresent()) {
-                    System.out.println(restaurant);
+                    // System.out.println(restaurant);
                     restaurants.remove(i);
                 }
             }
