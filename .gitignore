@@ -5,6 +5,7 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 application.properties
+application-API-KEY.properties
 
 ### STS ###
 .apt_generated
@@ -18,6 +19,7 @@ bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 application.properties
+application-API-KEY.properties
 
 ### IntelliJ IDEA ###
 .idea
@@ -28,6 +30,7 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 application.properties
+application-API-KEY.properties
 
 ### NetBeans ###
 /nbproject/private/
@@ -36,7 +39,9 @@ application.properties
 /nbdist/
 /.nb-gradle/
 application.properties
+application-API-KEY.properties
 
 ### VS Code ###
 .vscode/
 application.properties
+application-API-KEY.properties
