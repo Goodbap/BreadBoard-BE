@@ -12,7 +12,6 @@ public class WebConfig {
     @Bean
     public WebClient webClient() {
         return WebClient.builder()
-                .baseUrl("https://dapi.kakao.com/v2/local/search/category.json")
                 .defaultHeader("Authorization", "KakaoAK " + kakao_api_key)
                 .build();
     }
