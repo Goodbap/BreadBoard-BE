@@ -84,6 +84,19 @@ jobs:
     - name: Upload to S3
       run: aws s3 cp --region ap-northeast-2 ./breadboard.zip s3://$S3_BUCKET_NAME/
 
+    # Deploy
+    - name: Deploy
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      run: |
+        aws deploy create-deployment \
+        --application-name breadboard \
+        --deployment-group-name breadboard-deploy \
+        --file-exists-behavior OVERWRITE \
+        --s3-location bucket=breadboard-s3-bucket,bundleType=zip,key=breadboard.zip \ 
+        --region ap-northeast-2
+
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
     # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
     #
