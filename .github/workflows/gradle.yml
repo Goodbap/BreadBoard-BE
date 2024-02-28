@@ -89,12 +89,11 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      run: |
-        aws deploy create-deployment \
-        --application-name breadboard \
-        --deployment-group-name breadboard-deploy \
-        --file-exists-behavior OVERWRITE \
-        --s3-location bucket=breadboard-s3-bucket,bundleType=zip,key=breadboard.zip \ 
+      run: aws deploy create-deployment
+        --application-name breadboard
+        --deployment-group-name breadboard-deploy
+        --file-exists-behavior OVERWRITE
+        --s3-location bucket=breadboard-s3-bucket,bundleType=zip,key=breadboard.zip
         --region ap-northeast-2
 
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
